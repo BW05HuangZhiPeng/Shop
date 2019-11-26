@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.huangzhipeng.shop.dao.SpuMapper">
+
+	<insert id="insertSpu">
+		insert into hg_spu(goods_name,is_marketable,brand_id,caption,category_id,small_pic) 
+		values (#{goodsName},#{isMarketable},#{brandId},#{caption},#{categoryId},#{smallPic})
+	</insert>
+	
+	<update id="updateSpu">
+		update hg_spu set 
+		<if test="goodsName!=null and goodsName!=''">
+			goods_name=#{goodsName},
+		</if>
+		<if test="caption!=null and caption!=''">
+			caption=#{caption},
+		</if>
+		<if test="brandId!=null">
+			brand_id=#{brandId},
+		</if>
+		<if test="categoryId!=null">
+			category_id=#{categoryId},
+		</if>
+		<if test="smallPic!=null and smallPic!=''">
+			small_pic=#{smallPic},
+		</if>
+		<if test="isMarketable!=null and isMarketable!=''">
+			is_marketable=#{isMarketable}
+		</if>
+		where id=#{id}
+	</update>
+
+	<select id="selectSpuById" resultType="spu">
+		select s.id,s.goods_name goodsName,s.is_marketable isMarketable,s.brand_id brandId,s.caption,s.category_id categoryId,s.small_pic smallPic,c.name cName 
+		from hg_spu s join hg_category c on s.category_id=c.id where s.id=#{id}
+	</select>
+	
+	<select id="selectSpus" resultType="spu">
+		select id,goods_name goodsName from hg_spu
+	</select>
+	
+	<select id="selectSpuList" resultType="spu">
+		select s.id,s.goods_name goodsName,s.is_marketable isMarketable,b.name bName,c.name cName,s.small_pic smallPic
+		from hg_spu s join hg_brand b on s.brand_id=b.id join hg_category c on s.category_id=c.id
+		<where>
+		  <if test="categoryId!=null and categoryId!=''">
+		   s.category_id=#{categoryId}
+		   </if>
+		</where>
+	</select>
+	
+	<delete id="deleteSpuByIds">
+		delete from hg_spu where id in
+		<foreach collection="array" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+	
+</mapper>

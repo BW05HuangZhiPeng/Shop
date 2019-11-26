@@ -1,0 +1,13 @@
+com\huangzhipeng\shop\entity\SpecOption.class
+com\huangzhipeng\shop\service\SkuService.class
+com\huangzhipeng\shop\entity\Sku.class
+com\huangzhipeng\shop\util\PageUtil.class
+com\huangzhipeng\shop\service\SpecService.class
+com\huangzhipeng\shop\entity\Brand.class
+com\huangzhipeng\shop\entity\Spec.class
+com\huangzhipeng\shop\entity\SkuSpec.class
+com\huangzhipeng\shop\service\BrandService.class
+com\huangzhipeng\shop\service\CategoryService.class
+com\huangzhipeng\shop\entity\Category.class
+com\huangzhipeng\shop\entity\Spu.class
+com\huangzhipeng\shop\service\SpuService.class

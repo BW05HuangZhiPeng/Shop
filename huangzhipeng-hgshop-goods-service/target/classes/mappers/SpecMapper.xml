@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.huangzhipeng.shop.dao.SpecMapper">
+
+	<resultMap type="spec" id="specMap">
+		<id column="id" property="id"/>
+		<result column="spec_name" property="specName"/>
+		<collection property="options" javaType="list" ofType="specOption">
+			<id column="so_id" property="id"/>
+			<result column="option_name" property="optionName"/>
+			<result column="id" property="specId"/>
+		</collection>
+	</resultMap>
+	
+	<insert id="insertSpec" useGeneratedKeys="true" keyProperty="id">
+		insert into hg_spec(spec_name) values (#{specName})
+	</insert>
+	
+	<insert id="insertSpecOption">
+		insert into hg_spec_option(option_name,spec_id) values (#{optionName},#{specId})
+	</insert>
+	
+	<update id="updateSpec">
+		update hg_spec set spec_name=#{specName} where id=#{id}
+	</update>
+	
+	<update id="updateSpecOption">
+		update hg_spec_option set option_name=#{optionName} where id=#{id}
+	</update>
+	
+	<select id="selectSpecById" resultMap="specMap">
+		select s.id,s.spec_name,so.id so_id,so.option_name from hg_spec s join hg_spec_option so on s.id=so.spec_id where s.id=#{id}
+	</select>
+	
+	<select id="selectSpecList" resultType="spec">
+		select s.id,s.spec_name specName,group_concat(so.option_name) optionNames from hg_spec s join hg_spec_option so on s.id=so.spec_id
+		
+		<where>
+			<if test="specName != null and specName != ''">
+				and s.spec_name like concat('%',#{specName},'%')
+			</if>
+		</where>
+		group by s.id
+	</select>
+	
+	<delete id="deleteSpecOptionBySpecIds">
+		delete from hg_spec_option where spec_id in
+		<foreach collection="array" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+	
+	<delete id="deleteSpecByIds">
+		delete from hg_spec where id in
+		<foreach collection="array" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</delete>
+	
+	<delete id="deleteSpecOptionById">
+		delete from hg_spec_option where id=#{id}
+	</delete>
+	
+	<select id="selectSpecs" resultType="spec">
+		select id,spec_name specName from hg_spec
+	</select>
+	
+	<select id="selectSpecAndSpecOptionBySpecIds" resultType="map">
+		select CONCAT_WS(':',s.id,s.spec_name) specs,GROUP_CONCAT(CONCAT_WS(':',so.id,so.option_name)) options
+		from hg_spec s join hg_spec_option so on s.id=so.spec_id
+		where s.id in 
+		<foreach collection="list" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+		group by s.id
+	</select>
+	
+	<select id="selectSpecByIds" resultMap="specMap">
+		select s.id,s.spec_name,so.id so_id,so.option_name from hg_spec s join hg_spec_option so on s.id=so.spec_id where s.id in
+		<foreach collection="list" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</select>
+	<select id="selectSpecBySkuIds" resultMap="specMap">
+		select distinct s.id,s.spec_name,so.id so_id,so.option_name 
+		from hg_sku_spec ks join hg_spec s on ks.spec_id=s.id
+		join hg_spec_option so on ks.spec_option_id=so.id
+		where ks.sku_id in
+		<foreach collection="list" open="(" close=")" separator="," item="id">
+			#{id}
+		</foreach>
+	</select>
+	
+	
+</mapper>
